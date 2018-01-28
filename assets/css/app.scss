@@ -2,5 +2,52 @@
 
 @import "bootstrap";
 
-.side { padding: 4ex; text-align: center; }
-h1 { text-align: center; }
+
+body {
+  font: 14px "Century Gothic", Futura, sans-serif;
+  margin: 20px;
+}
+
+.board-row:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.square {
+  background: #fff;
+  border: 1px solid #999;
+  float: left;
+  font-weight: bold;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 100px;
+  height: 100px;
+  line-height: 100px;
+  font-size: 80px;
+}
+
+.square:focus {
+  outline: none;
+}
+
+.kbd-navigation .square:focus {
+  background: #ddd;
+}
+
+.game {
+  display: flex;
+  flex-direction: row;
+}
+
+button:disabled {
+  color: linen;
+  background-color:lightgrey;
+}
+
+.card {
+  margin-top: 25px;
+  width: 400px;
+}
