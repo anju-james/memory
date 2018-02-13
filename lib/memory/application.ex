@@ -1,5 +1,8 @@
 defmodule Memory.Application do
   use Application
+  @moduledoc """
+  Application start and configuration module.
+  """
 
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications

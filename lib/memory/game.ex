@@ -66,7 +66,7 @@ defmodule Memory.Game do
           end
         )
 
-        if (matching_elem != nil) do
+        if matching_elem != nil do
           # On finding matched tiles, they are disabled
           List.replace_at(new_grid_visibility, grid_index, -1)
           |> List.replace_at(elem(matching_elem, 1), -1)
