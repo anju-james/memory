@@ -54,7 +54,7 @@ defmodule Memory.Game do
       new_grid_visibility = List.replace_at(grid_visibility, grid_index, 1)
       new_click_count = count + 1
       # if even click then decide whether to hide both cards
-      if rem(new_click_count, 2) == 0 do
+      new_grid_visibility = if rem(new_click_count, 2) == 0 do
         search_alpha = Enum.at(grid_values, grid_index)
 
         # find matching counter part
@@ -68,11 +68,11 @@ defmodule Memory.Game do
 
         if (matching_elem != nil) do
           # On finding matched tiles, they are disabled
-          new_grid_visibility = List.replace_at(new_grid_visibility, grid_index, -1)
-                                |> List.replace_at(elem(matching_elem, 1), -1)
+          List.replace_at(new_grid_visibility, grid_index, -1)
+          |> List.replace_at(elem(matching_elem, 1), -1)
         else
           # Hides the clicked tiles that are not matching in value
-          new_grid_visibility = Enum.map(
+          Enum.map(
             new_grid_visibility,
             fn (x) ->
               if x == 1 do
@@ -83,6 +83,8 @@ defmodule Memory.Game do
             end
           )
         end
+      else
+        new_grid_visibility
       end
 
       # return the state
@@ -121,10 +123,15 @@ defmodule Memory.Game do
   """
   def determine_visibility_stateless(game_name, grid_index) do
     game_state = get_game_state(game_name)
-    %{values: new_grid_values, visibility: new_grid_visibility, click_count: new_count, gamestatus: new_gamestatus} = compute_grid_state(game_state, grid_index)
-    %{values: grid_values, visibility: grid_visibility, click_count: count, gamestatus: gamestatus} = game_state
+    %{
+      values: _new_grid_values,
+      visibility: _new_grid_visibility,
+      click_count: new_count,
+      gamestatus: new_gamestatus
+    } = compute_grid_state(game_state, grid_index)
+    %{values: grid_values, visibility: grid_visibility, click_count: _count, gamestatus: gamestatus} = game_state
     # show intermediate state showing two open cards
-    if (new_gamestatus != 1 || Enum.at(new_grid_visibility, grid_index) != 0 || rem(new_count, 2) != 0) do
+    if (new_gamestatus != 1 || rem(new_count, 2) != 0) do
       {:ignore, game_state}
     else
       {

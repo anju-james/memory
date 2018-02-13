@@ -1,81 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Button} from 'reactstrap';
-import {Socket} from "phoenix";
+import socket from './socket';
 
-export default function start_game(root) {
-    ReactDOM.render(<Game/>, root);
+export default function start_game(root, game_name) {
+    ReactDOM.render(<GameBoard gameName={game_name}/>, root);
 }
-
-/*
-Component that represents a game.
- */
-class Game extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {gameName: null, userInput: '', showWarning: false};
-        this.handleChange = this.handleChange.bind(this);
-        this.handleClick = this.handleClick.bind(this);
-
-    }
-
-    /* handle input change event*/
-    handleChange(event) {
-        this.setState({showWarning: false});
-        this.setState({userInput: event.target.value});
-    }
-
-    /* handle click event */
-    handleClick(event) {
-        const gameNameStr = this.state.userInput;
-        // validate the input and start if only a valid input
-        if (!gameNameStr || /^\s*$/.test(gameNameStr) || gameNameStr.indexOf(' ') >= 0) {
-            this.setState({showWarning: true});
-        } else {
-            this.setState({gameName: gameNameStr});
-        }
-    }
-
-    /* display warning if not a valid game name*/
-    showWarning() {
-        let warning = "";
-        if (this.state.showWarning == true) {
-            warning = <div className="row alert alert-danger" role="alert">
-                <strong>Not a valid Game Name.</strong>.Game name should be a non-empty string containing no white
-                spaces.
-            </div>;
-        }
-        return warning;
-    }
-
-    /* render the game */
-    drawGame() {
-        if (this.state.gameName == null) {
-            return <div>
-                {this.showWarning()}
-                <div className="row">
-                    <div className="col col-lg-3">
-                        <input type="text" value={this.state.userInput} onChange={this.handleChange}
-                               className="form-control" placeholder="Game Name" aria-label="Game Name"
-                               aria-describedby="basic-addon1"/>
-                    </div>
-                    <div className="col-sm">
-                        <button className="btn btn-primary"
-                                onClick={this.handleClick}>Start Game
-                        </button>
-                    </div>
-                </div>
-            </div>;
-        } else {
-            return <GameBoard gridSize={16} gameName={this.state.gameName}/>
-        }
-    }
-
-    render() {
-        return (this.drawGame());
-    }
-}
-
 
 /*
 Component that represents a memory gameboard.
@@ -96,9 +26,7 @@ class GameBoard extends React.Component {
 
     /* setup channels on component mount */
     componentDidMount() {
-        let socket = new Socket("/socket", {params: {game_name: this.props.gameName}});
-        socket.connect();
-        let channel = socket.channel("game:join", {});
+        let channel = socket.channel("game:" + this.props.gameName, {});
         this.channel = channel;
         channel.join()
             .receive("ok", resp => {

@@ -9,16 +9,20 @@ defmodule MemoryWeb.GameChannel do
   @doc """
   Handle join message.
   """
-  def join("game:join", _message, socket) do
-    game_state = Game.get_game_state(socket.assigns.game_name)
-    {:ok, %{state: game_state}, socket}
+  def join("game:" <> name, payload, socket) do
+    if authorized?(payload) do
+      socket = socket
+               |> assign(:game_name, name)
+      {:ok, %{state: Game.get_game_state(socket.assigns.game_name)}, socket}
+    else
+      {:error, %{reason: "unauthorized"}}
+    end
   end
 
-  @doc """
-  Handle unauthorized channels.
-  """
-  def join("game:" <> _private_room_id, _params, _socket) do
-    {:error, %{reason: "unauthorized"}}
+  # Add authorization logic here as required.
+  # Will enhance it later to look at usertoken and decide.
+  defp authorized?(_payload) do
+    true
   end
 
   @doc """

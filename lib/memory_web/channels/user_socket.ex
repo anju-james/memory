@@ -20,8 +20,7 @@ defmodule MemoryWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   # pass the gamename as a parameter on establishing socket
-  def connect(%{"game_name" => game_name}, socket) do
-    socket = assign(socket, :game_name, game_name)
+  def connect(_params, socket) do
     {:ok, socket}
   end
 
